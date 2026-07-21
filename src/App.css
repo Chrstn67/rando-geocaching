@@ -1,0 +1,128 @@
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #f0f9ff 0%, #eef2ff 100%);
+  color: #0f172a;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e0f2fe;
+}
+
+.app__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.3);
+  flex-shrink: 0;
+}
+
+.app__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app__heading h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.app__heading p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.app__main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  padding: 20px 24px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.app__map-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.app__map-wrap {
+  flex: 1;
+  min-height: 420px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.app__sidebar {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 18px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .app__main {
+    grid-template-columns: 1fr;
+  }
+
+  .app__sidebar {
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .app__header {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+
+  .app__logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  .app__heading h1 {
+    font-size: 18px;
+  }
+
+  .app__heading p {
+    font-size: 12px;
+  }
+
+  .app__main {
+    padding: 14px;
+    gap: 14px;
+  }
+
+  .app__map-wrap {
+    min-height: 300px;
+  }
+}

@@ -1,0 +1,114 @@
+.points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.points-list__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.points-list__items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.point-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.point-card:hover {
+  border-color: #7dd3fc;
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.12);
+  transform: translateY(-1px);
+}
+
+.point-card:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* Style pour les points atteints */
+.point-card--reached {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.point-card--reached:hover {
+  border-color: #4ade80;
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.14);
+}
+
+.point-card__icon {
+  display: flex;
+  flex-shrink: 0;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+/* L'icône devient verte pour les points atteints */
+.point-card--reached .point-card__icon {
+  color: #16a34a;
+}
+
+.point-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.point-card__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.point-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0ea5e9;
+}
+
+@media (max-width: 640px) {
+  .points-list__items {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 4px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .points-list__items li {
+    flex: 0 0 220px;
+    scroll-snap-align: start;
+  }
+
+  .point-card {
+    padding: 12px;
+  }
+}

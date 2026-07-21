@@ -1,0 +1,82 @@
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.status-banner.idle {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.status-banner.active {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-banner.success {
+  background: #dcfce7;
+  color: #15803d;
+  animation: banner-pop 0.5s ease;
+}
+
+.status-banner.error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-banner__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.status-banner__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-banner__counter {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes banner-pop {
+  0% {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .status-banner {
+    padding: 12px 14px;
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .status-banner__text {
+    white-space: normal;
+  }
+}
