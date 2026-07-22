@@ -190,6 +190,7 @@ export default function App() {
               userPosition={position}
               reachedIds={reachedIds}
               nearestId={nearestId}
+              proximityActive={isProximityActive}
             />
           </div>
           <Controls
