@@ -30,7 +30,7 @@
   transform: scale(1.2);
 }
 
-/* Animation de flottement */
+/* Animation de flottement pour les points non atteints */
 .pin-float {
   animation: pinFloat 2s ease-in-out infinite;
 }

@@ -9,8 +9,6 @@ export function useAlerts() {
   });
   const lastAlert = useRef(0);
   const proximityInterval = useRef(null);
-  const victoryCount = useRef(0);
-  const victoryTimeout = useRef(null);
   const [isProximityActive, setIsProximityActive] = useState(false);
   const [audioLoaded, setAudioLoaded] = useState(false);
   const [isVictoryPlaying, setIsVictoryPlaying] = useState(false);
@@ -141,48 +139,33 @@ export function useAlerts() {
     }
   }, [isProximityActive]);
 
-  // Son de victoire (joue 3 fois)
+  // Son de victoire (joue une seule fois)
   const playVictorySound = useCallback(() => {
     try {
       // Arrêter le son de proximité
       stopProximitySound();
 
-      // Réinitialiser le compteur
-      victoryCount.current = 0;
       setIsVictoryPlaying(true);
 
       const audio = audioRefs.current.victory;
       if (audio && audioLoaded) {
-        // Fonction pour jouer le son de victoire récursivement
-        const playVictory = () => {
-          if (victoryCount.current >= 3) {
-            setIsVictoryPlaying(false);
-            victoryCount.current = 0;
-            return;
-          }
+        audio.currentTime = 0;
+        audio.loop = false;
 
-          audio.currentTime = 0;
-          audio.loop = false;
-
-          const playPromise = audio.play();
-
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                victoryCount.current++;
-                // Programmer la prochaine lecture après la fin du son
-                victoryTimeout.current = setTimeout(() => {
-                  playVictory();
-                }, 500); // Attendre 500ms entre chaque lecture
-              })
-              .catch(() => {
-                // Fallback en cas d'erreur
-                playFallbackVictory();
-              });
-          }
-        };
-
-        playVictory();
+        audio
+          .play()
+          .then(() => {
+            // Attendre la fin du son avant de réinitialiser
+            setTimeout(
+              () => {
+                setIsVictoryPlaying(false);
+              },
+              audio.duration * 1000 + 500,
+            );
+          })
+          .catch(() => {
+            playFallbackVictory();
+          });
       } else {
         playFallbackVictory();
       }
@@ -192,7 +175,7 @@ export function useAlerts() {
     }
   }, [audioLoaded, stopProximitySound]);
 
-  // Fallback pour le son de victoire (synthèse - joue 3 fois)
+  // Fallback pour le son de victoire (synthèse - une fois)
   const playFallbackVictory = useCallback(() => {
     try {
       if (!window._audioCtx) {
@@ -204,54 +187,43 @@ export function useAlerts() {
       if (ctx.state === "suspended") ctx.resume();
 
       setIsVictoryPlaying(true);
-      victoryCount.current = 0;
 
-      const playVictoryMelody = () => {
-        if (victoryCount.current >= 3) {
+      const notes = [523, 659, 784, 1047];
+
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "square";
+        osc.frequency.value = freq;
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const startTime = ctx.currentTime + i * 0.15;
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.15, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.2);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.2);
+      });
+
+      // Réinitialiser après la fin
+      setTimeout(
+        () => {
           setIsVictoryPlaying(false);
-          victoryCount.current = 0;
-          return;
-        }
-
-        const notes = [523, 659, 784, 1047];
-
-        notes.forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = "square";
-          osc.frequency.value = freq;
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          const startTime = ctx.currentTime + i * 0.15;
-          gain.gain.setValueAtTime(0.0001, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.15, startTime + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.2);
-
-          osc.start(startTime);
-          osc.stop(startTime + 0.2);
-        });
-
-        victoryCount.current++;
-        // Programmer la prochaine lecture
-        victoryTimeout.current = setTimeout(() => {
-          playVictoryMelody();
-        }, 500);
-      };
-
-      playVictoryMelody();
+        },
+        notes.length * 0.15 * 1000 + 500,
+      );
     } catch {
       setIsVictoryPlaying(false);
-      victoryCount.current = 0;
     }
   }, []);
 
-  // Son de test (joue une fois complètement)
+  // Son de test (joue une fois)
   const playTestSound = useCallback(() => {
     try {
-      // Arrêter le son de test s'il est en cours
       if (audioRefs.current.test) {
         audioRefs.current.test.pause();
         audioRefs.current.test.currentTime = 0;
@@ -262,7 +234,6 @@ export function useAlerts() {
         audio.currentTime = 0;
         audio.loop = false;
         audio.volume = 0.7;
-
         audio.play().catch(() => {
           playFallbackTest();
         });
@@ -275,7 +246,7 @@ export function useAlerts() {
     }
   }, [audioLoaded]);
 
-  // Fallback pour le son de test (synthèse - joue une fois)
+  // Fallback pour le son de test (synthèse)
   const playFallbackTest = useCallback(() => {
     try {
       if (!window._audioCtx) {
@@ -325,11 +296,6 @@ export function useAlerts() {
       if (proximityInterval.current) {
         clearInterval(proximityInterval.current);
         proximityInterval.current = null;
-      }
-
-      if (victoryTimeout.current) {
-        clearTimeout(victoryTimeout.current);
-        victoryTimeout.current = null;
       }
 
       Object.values(audioRefs.current).forEach((audio) => {
